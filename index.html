@@ -1,0 +1,132 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+
+  <title>Aneesh Status</title>
+
+  <script src='moment.min.js'></script>
+  <link href='http://fonts.googleapis.com/css?family=Montserrat:400,700' rel='stylesheet' type='text/css'>
+
+</head>
+
+  <style>
+    body,
+    html {
+      margin: 0;
+      padding: 0;
+      text-align: center;
+      font-family: 'Montserrat', 'Helvetica', 'Helvetica Neue', sans-serif;
+    }
+
+    button {
+      font-family: 'Montserrat', 'Helvetica', 'Helvetica Neue', sans-serif;
+    }
+
+    body {
+      height: 100%;
+      padding-top: 100px;
+      background: rgba(0,0,0,.15);
+    }
+
+    body > .content {
+      text-align: center;
+      min-width: 320px;
+      width: 40%;
+      margin: 0 auto;
+      border: 1px solid rgba(0,0,0,.30);
+      border-radius: 4px;
+      padding: 0 0 48px 0;
+      background: white;
+    }
+
+    h1 {
+      font-size: 4em;
+      margin-top: 48px;
+      margin-bottom: 8px;
+
+      font-weight: 700;
+    }
+
+    h2, h3 {
+      text-transform: uppercase;
+    }
+
+    .alive {
+      padding: 20px;
+      color: white;
+      font-size: 2em;
+      background: rgb(230, 126, 34);
+      margin-bottom: 40px;
+    }
+
+    .alive.true {
+      background: rgb(46, 204, 113);
+    }
+
+    .alive.false {
+      background: rgb(231, 76, 60);
+    }
+
+    .api {
+      color: rgba(0,0,0,.6);
+    }
+
+    button.sighting {
+      border: 1px solid rgba(0,0,0,.15);
+      background: #3498db;
+      font-size: 1.2em;
+      text-transform: uppercase;
+      color: white;
+      padding: 12px 20px;
+    }
+
+  </style>
+
+  <body ng-app>
+
+  <div class='content'>
+    <h1>ANEESH</h1>
+    <h4> Last sighting: <span class='last_sighting'>Never</span></h4>
+    <div class='alive'>UNKNOWN</div>
+    <h2> Availability: </h2>
+    <div class='availability'> No availability information. </div>
+    <br>
+    <h3> Status: </h3>
+    <div class='status'> No status information. </div>
+    <br>
+    <br>
+    <button onclick='reportSighting()' class='sighting'>Report a sighting! </button>
+  </div>
+  <br>
+    <div class='api'> Powered by the <a href='http://aneeshusa.herokuapp.com'>aneeshusa API v2</a> by Kate Yu</div>
+
+  </body>
+  <script>
+
+    function reportSighting(){
+      alert('Thanks for reporting a sighting!');
+      httpGET('http://aneeshusa.herokuapp.com/api/v2/sighting');
+    }
+
+    function httpGET(theUrl) {
+    var xmlHttp = null;
+
+    xmlHttp = new XMLHttpRequest();
+    xmlHttp.open( "GET", theUrl, false );
+    xmlHttp.send( null );
+    return xmlHttp.responseText;
+    }
+
+    window.aneesh = JSON.parse(httpGET('http://aneeshusa.herokuapp.com/api/v2/aneeshusa')).aneeshusa;
+    for (var key in aneesh){
+      document.querySelector('.' + key).innerHTML = "\"" + aneesh[key] + "\"";
+    }
+
+    document.querySelector('.alive').innerHTML = aneesh.alive ? 'ALIVE' : 'DEAD';
+    document.querySelector('.alive').className += aneesh.alive ? ' true': ' false'
+    document.querySelector('.last_sighting').innerHTML = moment(new Date(aneesh.last_sighting)).fromNow();
+
+  </script>
+</html>
